@@ -57,26 +57,22 @@ def Pa(x, a, b):
     return a * x * np.exp(-b * x)
 
 
-def RR(x, a, b):
-    return np.exp(- a * x * np.exp(-b * x))
+def RR(x, a, b, c):
+    return np.exp(- a * x**2 * np.exp(-b * x)) + c * x
 
 
-dose = [3, 6, 12, 24, 60, 30000]
-data3 = [1.02, 0.66, 1.61, 1.57, 4.86, 5.59]
+dose = [3, 6, 12, 24, 60]  # , 30000]
+data3 = [1.02, 0.66, 1.61, 1.57, 4.86]  #, 5.59]
 
-popt3, pcov3 = curve_fit(RR, dose, data3)
-perr3 = np.sqrt(np.diag(pcov3))  # standard deviation error - nie zawsze prawdziwe
+popt3, pcov3 = curve_fit(RR, dose, data3, bounds=([-0, 0, 0], [2., 2., 0.5]))
 
 print(popt3)
-print(perr3)
 
-residuals = data3 - RR(dose, *popt3)
-ss_res = np.sum(residuals**2)
-ss_tot = np.sum((dose-np.mean(dose))**2)
-r_squared = 1 - (ss_res / ss_tot)
-print(r_squared)
 
-plt.plot(dose, [RR(x, popt3[0], popt3[1]) for x in dose], 'g--', label='fit: a=%.3f, b=%.3f' % tuple(popt3))
+plt.plot(range(60), [RR(x, popt3[0], popt3[1], popt3[2]) for x in range(60)], 'g--', label='fit: a=%.3f, b=%.3f, c=%.6f' % tuple(popt3))
+plt.xlabel("dose rate [mGy/h]")
+plt.ylabel("hazard ratio")
+# plt.xscale("log")
 plt.scatter(dose, data3, label="data")
 plt.legend()
 plt.show()
