@@ -16,133 +16,106 @@ def function_sig(x, b, c):
     return 1 / (1 + np.exp(-b * (x - c)))
 
 
-def wizka1(danex, daney, title="", minim=20):
+def animate_one_set(datax, datay, minim=20, xlab="dose rate", ylab="relative risk"):  # slider datay (datax)
 
-    fig = plt.figure(1)
+    fig = plt.figure()
     ax1 = fig.add_subplot()
-    ax1.plot(danex, daney[20])
+    ax1.plot(datax, datay[minim])
 
-    plt.subplots_adjust(bottom=0.25)  # przesuwam żeby mi się zmieściły slidery i przyciski
-    ax1.set_title("tydzien nr: " + str(minim))
-    lim = [0, max(max(p) for p in daney[minim:])]
+    plt.subplots_adjust(bottom=0.25)  # making space for slider
+    ax1.set_title("week: " + str(minim))
+    lim = [0, max(max(p) for p in datay[minim:])*1.1]
     ax1.set_ylim(lim)
-    ax1.set_xlabel("dose rate")
-    ax1.set_ylabel("survival")
+    ax1.set_xlabel(xlab)
+    ax1.set_ylabel(ylab)
 
     axt = plt.axes([0.1, 0.07, 0.8, 0.02])  # współrzędne slidera
-    st = Slider(axt, 't', minim, len(daney), valstep=1)
+    st = Slider(axt, 't', minim, len(datay), valstep=1)
 
     def update2(val):  #
         ax1.clear()
-        ax1.plot(danex, daney[st.val - 1])
+        ax1.plot(datax, datay[st.val - 1])
         ax1.set_ylim(lim)
-        ax1.set_title("tydzien nr: " + str(st.val))
-        ax1.set_xlabel("dose rate")
-        ax1.set_ylabel("survival")
+        ax1.set_title("week: " + str(st.val))
+        ax1.set_xlabel(xlab)
+        ax1.set_ylabel(ylab)
 
     st.on_changed(update2)
     plt.show()
 
 
-def wizka2(danex, daney, title="", minim=20):
-
+def animate_two_sets(datax, datay, datax2, datay2, minim=20, xlab="dose rate", ylab="relative risk"):
     fig = plt.figure()
     ax1 = fig.add_subplot()
-    ax1.plot(danex, daney[minim])
-
-    plt.subplots_adjust(bottom=0.25)  # przesuwam żeby mi się zmieściły slidery i przyciski
-    ax1.set_title(title)
-    lim = [0, max(max(p) for p in daney[minim:])]
-    ax1.set_ylim(lim)
-    ax1.plot(danex, np.ones_like(danex))
-    ax1.set_title("tydzien nr: " + str(minim))
-    ax1.set_xlabel("dose rate")
-    ax1.set_ylabel("risk")
-
-    axt = plt.axes([0.1, 0.07, 0.8, 0.02])  # współrzędne slidera
-    st = Slider(axt, 't', minim, len(daney), valstep=1)
-
-    def update2(val):  #
-        ax1.clear()
-        ax1.plot(danex, daney[st.val - 1])
-        ax1.plot(danex, np.ones_like(danex))
-        ax1.set_title("tydzien nr: " + str(st.val))
-        ax1.set_xlabel("dose rate")
-        ax1.set_ylabel("risk")
-        ax1.set_ylim(lim)
-
-    st.on_changed(update2)
-    plt.show()
-
-
-def wizka3(danex, daney, daney2, title="", minim=20):
-    fig = plt.figure()
-    ax1 = fig.add_subplot()
-    ax1.plot(danex, daney[minim])
-    ax1.plot(range(60), daney2[minim])
-
-    plt.subplots_adjust(bottom=0.25)
+    ax1.plot(datax, datay[minim])
+    ax1.plot(datax2, datay2[minim])
 
     ax1.set_title("week: " + str(minim))
-    lim = [0, 4]  # max(max(p) for p in daney[minim:])]
+    lim = [0, max(max(p) for p in datay[minim:])*1.1]
     ax1.set_ylim(lim)
-    ax1.plot(danex, np.ones_like(danex))
+    ax1.plot(datax, np.ones_like(datax))
     ax1.set_title(minim)
-    ax1.set_xlabel("dose rate")
-    ax1.set_ylabel("Risk")
+    ax1.set_xlabel(xlab)
+    ax1.set_ylabel(ylab)
 
-    axt = plt.axes([0.1, 0.07, 0.8, 0.02])  # współrzędne slidera
-    st = Slider(axt, 't', minim, len(daney), valstep=1)
+    plt.subplots_adjust(bottom=0.25)
+    axt = plt.axes([0.1, 0.07, 0.8, 0.02])
+    st = Slider(axt, 't', minim, len(datay), valstep=1)
 
-    def update2(val):  #
+    def update2(val):
         ax1.clear()
         ax1.set_ylim(lim)
         ax1.set_title("week: " + str(st.val))
-        ax1.set_xlabel("dose rate")
-        ax1.set_ylabel("RR")
-        ax1.plot(danex, daney[st.val - 1])
-        ax1.plot(danex, np.ones_like(danex))
-        ax1.plot(range(60), daney2[st.val - 1], 'g--')
+        ax1.set_xlabel(xlab)
+        ax1.set_ylabel(ylab)
+        ax1.plot(datax, datay[st.val - 1])
+        ax1.plot(datax, np.ones_like(datax))
+        ax1.plot(datax2, datay2[st.val - 1], 'g--')
 
     st.on_changed(update2)
     plt.show()
 
-def zapis(danex, daney, title="", minim=20):
+
+def zapis(datax, datay, title="", minim=20, xlab="dose rate", ylab="relative risk"):
 
     fig = plt.figure()
     ax1 = fig.add_subplot()
-    ax1.plot(danex, daney[minim])
+    ax1.plot(datax, datay[minim])
 
     ax1.set_title(title)
-    lim = [0, max(max(p) for p in daney[minim:])]
+    lim = [0, max(max(p) for p in datay[minim:])*1.1]
     ax1.set_ylim(lim)
-    ax1.plot(danex, np.ones_like(danex))
-    ax1.set_title(minim)
+    ax1.plot(datax, np.ones_like(datax))
+    ax1.set_title("week: " + str(minim))
+    ax1.set_xlabel(xlab)
+    ax1.set_ylabel(ylab)
 
     def updatefig(x):
         ax1.clear()
         ax1.set_ylim(lim)
-        ax1.set_title(x)
-        line, = ax1.plot(danex, daney[x - 1])
-        line2, = ax1.plot(danex, np.ones_like(danex))
+        ax1.set_title("week: " + str(x))
+        line, = ax1.plot(datax, datay[x - 1])
+        line2, = ax1.plot(datax, np.ones_like(datax))
+        ax1.set_xlabel(xlab)
+        ax1.set_ylabel(ylab)
         return line, line2,
 
-    ani = animation.FuncAnimation(fig, updatefig, range(minim, len(daney)), interval=40, blit=True, repeat=True)
+    ani = animation.FuncAnimation(fig, updatefig, range(minim, len(datay)), interval=40, blit=True, repeat=True)
     writergif = animation.PillowWriter()
     ani.save(title + ".gif", writer=writergif)
 
 
-def zapis2(danex, daney, daney2, title="", minim=20):
+def zapis2(datax, datay, datay2, title="", minim=20):
 
     fig = plt.figure()
     ax1 = fig.add_subplot()
-    ax1.plot(danex, daney[minim])
-    ax1.plot(range(60), daney2[minim])
+    ax1.plot(datax, datay[minim])
+    ax1.plot(range(60), datay2[minim])
 
     ax1.set_title("week: " + str(minim))
-    lim = [0, max(max(p) for p in daney[minim:])]
+    lim = [0, max(max(p) for p in datay[minim:])]
     ax1.set_ylim(lim)
-    ax1.plot(danex, np.ones_like(danex))
+    ax1.plot(datax, np.ones_like(datax))
     ax1.set_title(minim)
     ax1.set_xlabel("dose rate")
     ax1.set_ylabel("RR")
@@ -153,17 +126,19 @@ def zapis2(danex, daney, daney2, title="", minim=20):
         ax1.set_title("week: " + str(x))
         ax1.set_xlabel("dose rate")
         ax1.set_ylabel("RR")
-        line, = ax1.plot(danex, daney[x - 1])
-        line2, = ax1.plot(danex, np.ones_like(danex))
-        line3, = ax1.plot(range(60), daney2[x - 1], 'g--')
+        line, = ax1.plot(datax, datay[x - 1])
+        line2, = ax1.plot(datax, np.ones_like(datax))
+        line3, = ax1.plot(range(60), datay2[x - 1], 'g--')
         return line, line2, line3,
 
-    ani = animation.FuncAnimation(fig, updatefig, range(minim, len(daney)), interval=40, blit=True, repeat=True)
+    ani = animation.FuncAnimation(fig, updatefig, range(minim, len(datay)), interval=40, blit=True, repeat=True)
     writergif = animation.PillowWriter()
     ani.save(title + ".gif", writer=writergif)
 
+
 x_contr = [43, 46, 50, 52, 61, 63, 64, 65, 67, 69, 70, 71, 73, 74, 75, 77, 78, 79, 82, 83, 84, 85, 89]
-y_contr = [0.987, 0.974, 0.961, 0.934, 0.92, 0.907, 0.893, 0.878, 0.864, 0.85, 0.835, 0.821, 0.789, 0.757, 0.74, 0.706, 0.689, 0.671, 0.653, 0.633, 0.614, 0.554, 0.532]
+y_contr = [0.987, 0.974, 0.961, 0.934, 0.92, 0.907, 0.893, 0.878, 0.864, 0.85, 0.835, 0.821, 0.789, 0.757, 0.74, 0.706,
+           0.689, 0.671, 0.653, 0.633, 0.614, 0.554, 0.532]
 
 x_3 = [21, 42, 47, 53, 79, 84]
 y_3 = [0.958, 0.915, 0.818, 0.77, 0.693, 0.607]
@@ -185,15 +160,15 @@ YY = [y_contr, y_3, y_6, y_12, y_24, y_60]
 
 dose_rates = [0, 3, 6, 12, 24, 60]
 
-BB = []
-CC = []
+sig_fun_b = []
+sig_fun_c = []
 
-for x in range(len(XX)):
+for x in range(len(XX)):  # fitting function exp(- a * x^2 * exp(-b * x)) + c * x to the data
     popt1, pcov1 = curve_fit(function_sig, XX[x], YY[x], bounds=([-1, 0], [0., 150.]))
 
-    BB.append(popt1[0])
-    CC.append(popt1[1])
-    """
+    sig_fun_b.append(popt1[0])
+    sig_fun_c.append(popt1[1])
+    """  # plotting each dataset (for given dose rate) with fitted function
     plt.plot(XX[x], [function_sig(x, popt1[0], popt1[1]) for x in XX[x]],
              label='fit: a=%.3f, b=%.3f' % tuple(popt1))
     plt.scatter(XX[x], YY[x], label="data")
@@ -203,28 +178,35 @@ for x in range(len(XX)):
     # """
 
 
-do_wizki_dane = []
+survival_from_function = []
+cancer_risk_from_function = []
 for x in range(100):
     a = []
-    for y in range(len(BB)):
-        a.append(1 - function_sig(x, BB[y], CC[y]))
-    do_wizki_dane.append(a)
+    b = []
+    for y in range(len(sig_fun_b)):
+        i = function_sig(x, sig_fun_b[y], sig_fun_c[y])
+        a.append(1 - i)
+        b.append(i)
+    cancer_risk_from_function.append(a)
+    survival_from_function.append(b)
+
 
 title = "cancer risk (dose rate) - na suwaku czas"
-wizka1(dose_rates, do_wizki_dane, title)
+animate_one_set(dose_rates, cancer_risk_from_function)
+# zapis(dose_rates, cancer_risk_from_function, "survival", 50)
 
 only_doses = [3, 6, 12, 24, 60]
 do_wizki_RR = []
-for x in range(len(do_wizki_dane)):
+for x in range(len(cancer_risk_from_function)):
 
     a = []
     for y in range(len(only_doses)):
-        a.append(do_wizki_dane[x][y+1]/do_wizki_dane[x][0])
+        a.append(cancer_risk_from_function[x][y+1]/cancer_risk_from_function[x][0])
     do_wizki_RR.append(a)
 
 # title = "Relative Rist (dose rate) - na suwaku czas"
-wizka2(only_doses, do_wizki_RR, title, 50)
-# zapis(only_doses, do_wizki_RR, title, 50)
+animate_one_set(only_doses, do_wizki_RR, 50)
+zapis(only_doses, do_wizki_RR, title, 50)
 
 nr = 75
 popt1, pcov1 = curve_fit(function, only_doses, do_wizki_RR[nr], bounds=([-0, 0, 0], [2., 2., 0.5]))
@@ -255,5 +237,5 @@ for nr in range(100):
     a = [function(x, popt1[0], popt1[1], popt1[2]) for x in range(60)]
     dat.append(a)
 
-wizka3(only_doses, do_wizki_RR, dat, title, 50)
+animate_two_sets(only_doses, do_wizki_RR,range(60), dat, title, 50)
 zapis2(only_doses, do_wizki_RR, dat, title, 70)
